@@ -10,13 +10,14 @@ module Gauguin
       histogram = @image.color_histogram
       image_size = @image.columns * @image.rows
 
-      histogram.each do |pixel, count|
-        image_pixel = @image.pixel(pixel)
-
-        red, green, blue = image_pixel.to_rgb
+      histogram.each do |count, rgba|
+        red, green, blue, opacity = rgba
         percentage = count.to_f / image_size
-        color = Gauguin::Color.new(red, green, blue, percentage,
-                                   image_pixel.transparent?)
+
+        # binding.pry if opacity != 255
+        transparent = opacity.zero?
+
+        color = Gauguin::Color.new(red, green, blue, percentage, transparent)
 
         # histogram can contain different magic pixels for
         # the same colors with different opacity

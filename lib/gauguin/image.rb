@@ -1,17 +1,39 @@
 require 'rmagick'
+require 'mini_magick'
 require 'forwardable'
+
+module MiniMagick
+  class Image
+    def histogram
+      color = run_command("convert", path, "-format", "%c", "-alpha", "on", "histogram:info:")
+      regex = /\((\S+),(\S+),(\S+),(\S+)\)/
+      color.split("\n").map do |row|
+        data = row.split(' ')
+        count = data.shift
+        data.pop
+        data.pop
+        rgb = data.join('').match(regex).to_a
+        rgb.shift
+
+        [count.gsub(':', '').to_i, rgb.map(&:to_i)]
+      end
+
+    end
+  end
+end
 
 module Gauguin
   class Image
     extend Forwardable
-    attr_accessor :image
-    delegate [:color_histogram, :columns, :rows, :write] => :image
+    attr_accessor :image, :mimage
+    delegate [:write] => :image
 
     def initialize(path = nil)
       return unless path
 
       list = Magick::ImageList.new(path)
       self.image = list.first
+      self.mimage = MiniMagick::Image.open(path)
     end
 
     def self.blank(columns, rows)
@@ -25,6 +47,18 @@ module Gauguin
 
     def pixel(magic_pixel)
       Pixel.new(magic_pixel)
+    end
+
+    def color_histogram
+      mimage.histogram
+    end
+
+    def rows
+      mimage.height
+    end
+
+    def columns
+      mimage.width
     end
 
     def pixel_color(row, column, *args)
