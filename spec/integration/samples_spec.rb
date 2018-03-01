@@ -6,7 +6,10 @@ module Gauguin
       File.join("spec", "support", "pictures", file_name)
     end
 
-    let(:painting) { Painting.new(picture_path(file_name)) }
+    let(:painting) {
+      Gauguin.configure {|c| c.color_similarity_threshold = 10;}
+      Painting.new(picture_path(file_name))
+   }
 
     def self.paths
       (1..11).map { |i| picture_path(File.join("samples", "sample#{i}.png")) }

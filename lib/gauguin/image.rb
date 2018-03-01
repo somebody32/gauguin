@@ -1,88 +1,37 @@
-require 'rmagick'
-require 'mini_magick'
-require 'forwardable'
-
-module MiniMagick
-  class Image
-    def histogram
-      color = run_command("convert", path, "-format", "%c", "-alpha", "on", "histogram:info:")
-      regex = /\((\S+),(\S+),(\S+),(\S+)\)/
-      color.split("\n").map do |row|
-        data = row.split(' ')
-        count = data.shift
-        data.pop
-        data.pop
-        rgb = data.join('').match(regex).to_a
-        rgb.shift
-
-        [count.gsub(':', '').to_i, rgb.map(&:to_i)]
-      end
-
-    end
-  end
-end
+require "shellwords"
 
 module Gauguin
   class Image
-    extend Forwardable
-    attr_accessor :image, :mimage
-    delegate [:write] => :image
+    attr_accessor :height, :width
+    RGBA_REGEX = /\((\S+),(\S+),(\S+),(\S+)\)/
 
     def initialize(path = nil)
       return unless path
-
-      list = Magick::ImageList.new(path)
-      self.image = list.first
-      self.mimage = MiniMagick::Image.open(path)
-    end
-
-    def self.blank(columns, rows)
-      blank_image = Image.new
-      transparent_white = Magick::Pixel.new(255, 255, 255, Pixel::MAX_TRANSPARENCY)
-      blank_image.image = Magick::Image.new(columns, rows) do
-        self.background_color = transparent_white
-      end
-      blank_image
-    end
-
-    def pixel(magic_pixel)
-      Pixel.new(magic_pixel)
+      self.path = path
+      identify!(path)
     end
 
     def color_histogram
-      mimage.histogram
-    end
+      output = `convert #{path.shellescape} -format %c -alpha on histogram:info:-`
+      output.lines.map do |line|
+        data = line.split(' ')
+        count = data.shift
+        data.pop(2)
 
-    def rows
-      mimage.height
-    end
+        rgb = data.join('').match(RGBA_REGEX)
 
-    def columns
-      mimage.width
-    end
-
-    def pixel_color(row, column, *args)
-      magic_pixel = self.image.pixel_color(row, column, *args)
-      pixel(magic_pixel)
-    end
-
-    class Pixel
-      MAX_CHANNEL_VALUE = 257
-      MAX_TRANSPARENCY = 65535
-
-      def initialize(magic_pixel)
-        @magic_pixel = magic_pixel
+        [count.gsub(':', '').to_i, rgb[1..rgb.size-1].map(&:to_i)]
       end
+    end
 
-      def transparent?
-        @magic_pixel.opacity >= MAX_TRANSPARENCY
-      end
+    private
 
-      def to_rgb
-        [:red, :green, :blue].map do |color|
-          @magic_pixel.send(color) / MAX_CHANNEL_VALUE
-        end
-      end
+    attr_accessor :path
+
+    def identify!(path)
+      output = `identify #{path.shellescape}`.split(' ')
+      dimensions = output[2].split('x')
+      self.height, self.width = dimensions.map(&:to_i)
     end
   end
 end

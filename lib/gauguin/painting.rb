@@ -18,12 +18,6 @@ module Gauguin
       colors_clusters = @colors_clusterer.clusters(colors)
       @noise_reducer.call(colors_clusters)
     end
-
-    def recolor(palette, path)
-      new_colors = @colors_clusterer.reversed_clusters(palette)
-      recolored_image = @image_recolorer.recolor(new_colors)
-      recolored_image.write(path)
-    end
   end
 end
 

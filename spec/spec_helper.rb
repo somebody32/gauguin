@@ -32,29 +32,5 @@ class FakeImage
     :magic_white_pixel, :magic_red_little_transparent_pixel,
     :pixels_repository, :color_histogram, :rows, :columns,
     :pixels, :colors_to_pixels
-
-  def pixel(magic_pixel)
-    pixels_repository[magic_pixel]
-  end
-
-  def pixel_color(row, column, new_color = nil)
-    if new_color
-      new_pixel = self.colors_to_pixels[new_color]
-      pixels[row][column] = new_pixel
-    end
-    pixels[row][column]
-  end
-
-  class Pixel < Gauguin::Image::Pixel
-    attr_accessor :magic_pixel
-
-    def initialize(magic_pixel)
-      self.magic_pixel = magic_pixel
-    end
-
-    def to_rgb
-      magic_pixel.rgb
-    end
-  end
 end
 
