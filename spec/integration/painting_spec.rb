@@ -37,7 +37,7 @@ module Gauguin
       context "image has two colors but with different gradients
         so actually 1942 unique colors" do
         let(:file_name) { "gray_and_black.png" }
-        let(:values) { subject.values.flatten }
+        let(:values) { subject.keys.flatten }
 
         it { expect(subject.count).to eq 2 }
         it { expect(values.include?(black)).to be true }

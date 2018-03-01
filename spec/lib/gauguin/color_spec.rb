@@ -11,12 +11,11 @@ module Gauguin
       let(:blue) { 3 }
       let(:percentage) { 0.5 }
 
-      subject { Color.new(red, green, blue, percentage) }
+      subject { Color.new(red, green, blue) }
 
       it { expect(subject.red).to eq red }
       it { expect(subject.green).to eq green }
       it { expect(subject.blue).to eq blue }
-      it { expect(subject.percentage).to eq percentage }
     end
 
     describe "#==" do
@@ -45,7 +44,7 @@ module Gauguin
 
     describe '#distance' do
       it 'returns circa 178.36 between black & red' do
-        expect(black.distance(red)).to be_within(0.01).of(117.34)
+        expect(black.distance_lab(red)).to be_within(0.01).of(117.34)
       end
     end
 
@@ -73,7 +72,7 @@ module Gauguin
       it { expect(subject).to eq("rgb(0, 0, 0)") }
     end
 
-    let(:color) { Color.new(1, 2, 3, 0.4, true) }
+    let(:color) { Color.new(1, 2, 3, true) }
 
     describe "#to_rgb" do
       subject { color.to_rgb }
@@ -90,17 +89,7 @@ module Gauguin
     describe "#to_a" do
       subject { color.to_a }
 
-      it { expect(subject).to eq([1, 2, 3, 0.4, true]) }
-    end
-
-    describe ".from_a" do
-      subject { Color.from_a([1, 2, 3, 0.4, true]) }
-
-      it { expect(subject.red).to eq(1) }
-      it { expect(subject.green).to eq(2) }
-      it { expect(subject.blue).to eq(3) }
-      it { expect(subject.percentage).to eq(0.4) }
-      it { expect(subject.transparent).to be true }
+      it { expect(subject).to eq([1, 2, 3, true]) }
     end
 
     describe "#transparent?" do
@@ -119,7 +108,7 @@ module Gauguin
     describe "#inspect" do
       subject { color.inspect }
 
-      it { expect(subject).to eq("rgb(1, 2, 3)[0.4][transparent]")}
+      it { expect(subject).to eq("rgb(1, 2, 3)")}
     end
   end
 end

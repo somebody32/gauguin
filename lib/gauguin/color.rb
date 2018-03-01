@@ -22,11 +22,14 @@ module Gauguin
     def similar?(other_color)
       return false if transparent != other_color.transparent
 
-      similarity_threshold = Gauguin.configuration.color_similarity_threshold
-      method = Gauguin.configuration.color_similarity_method
+      distance(other_color) < Gauguin.configuration.color_similarity_threshold
+    end
 
-      distance = method == :lab ? distance_lab(other_color) : distance_cie94(other_color)
-      distance < similarity_threshold
+    def distance(other_color)
+      method = Gauguin.configuration.color_similarity_method
+      return distance_lab(other_color) if method == :lab
+
+      distance_cie94(other_color)
     end
 
     def distance_lab(other_color)
@@ -86,36 +89,27 @@ module Gauguin
     end
 
     def to_rgb
-      [self.red, self.green, self.blue]
+      [red, green, blue]
     end
 
     def to_a
-      to_rgb + [self.transparent]
-    end
-
-    def self.from_a(array)
-      red, green, blue, transparent = array
-      Color.new(red, green, blue, transparent)
+      to_rgb + [transparent]
     end
 
     def to_key
-      to_rgb + [self.transparent]
+      to_a
     end
 
     def to_s
-      "rgb(#{self.red}, #{self.green}, #{self.blue})"
+      "rgb(#{red}, #{green}, #{blue})"
     end
 
     def inspect
-      msg = "#{to_s}"
-      if transparent?
-        msg += "[transparent]"
-      end
-      msg
+      to_s
     end
 
     def transparent?
-      self.transparent
+      transparent
     end
   end
 end

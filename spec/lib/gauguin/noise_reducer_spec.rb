@@ -7,16 +7,16 @@ module Gauguin
     describe "#reduce" do
       subject { reducer.call(colors).keys }
 
-      let(:white) { Color.new(255, 255, 255, 0.01) }
-      let(:red) { Color.new(255, 0, 0, 0.02) }
-      let(:black) { Color.new(0, 0, 0, 0.97) }
+      let(:white) { Color.new(255, 255, 255) }
+      let(:red) { Color.new(255, 0, 0) }
+      let(:black) { Color.new(0, 0, 0) }
 
       let(:colors) do
-        {
-          black => [black],
-          red => [red],
-          white => [white]
-        }
+        [
+          [black, 0.97],
+          [red, 0.02],
+          [white, 0.01]
+        ]
       end
 
       configure(:min_percentage_sum, 0.96)
@@ -26,9 +26,13 @@ module Gauguin
       end
 
       context "no sum greater than min_percentage_sum" do
-        let(:white) { Color.new(255, 255, 255, 0.02) }
-        let(:red) { Color.new(255, 0, 0, 0.01) }
-        let(:black) { Color.new(0, 0, 0, 0.90) }
+        let(:colors) do
+          [
+            [black, 0.9],
+            [red, 0.01],
+            [white, 0.02]
+          ]
+        end
 
         it "returns all colors" do
           expect(subject).to eq([black, red, white])

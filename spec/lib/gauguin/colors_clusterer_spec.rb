@@ -2,8 +2,8 @@ require 'spec_helper'
 
 module Gauguin
   describe ColorsClusterer do
-    let(:black) { Color.new(0, 0, 0, 0.597) }
-    let(:white) { Color.new(255, 255, 255, 0.4) }
+    let(:black) { Color.new(0, 0, 0) }
+    let(:white) { Color.new(255, 255, 255) }
 
     let(:clusterer) { ColorsClusterer.new }
 
@@ -17,31 +17,35 @@ module Gauguin
       end
 
       context "colors includes similar colors" do
-        let(:pseudo_black) { Color.new(4, 0, 0, 0.001) }
-        let(:other_pseudo_black) { Color.new(5, 0, 0, 0.001) }
-        let(:another_pseudo_black) { Color.new(6, 0, 0, 0.001) }
+        let(:pseudo_black) { Color.new(4, 0, 0) }
+        let(:other_pseudo_black) { Color.new(5, 0, 0) }
+        let(:another_pseudo_black) { Color.new(6, 0, 0) }
 
         let(:colors) do
-          [black, white, pseudo_black, other_pseudo_black,
-           another_pseudo_black]
+          [
+            [black, 0.597],
+            [white, 0.4],
+            [pseudo_black, 0.001],
+            [other_pseudo_black, 0.001],
+            [another_pseudo_black, 0.001]
+          ]
         end
 
         it "make separate groups for them" do
           expect(subject).to eq({
-            white => [white],
-            black => [black, pseudo_black, other_pseudo_black,
-                      another_pseudo_black]
+            [white, 0.4] => [[white, 0.4]],
+            [black, 0.6] => [[black, 0.6], [pseudo_black, 0.001], [other_pseudo_black, 0.001], [another_pseudo_black, 0.001]]
           })
         end
 
         context do
-          let(:white) { Color.new(255, 255, 255, 0.3) }
+          let(:white) { Color.new(255, 255, 255) }
           let(:transparent_white) do
-            Color.new(255, 255, 255, 0.1, Image::Pixel::MAX_TRANSPARENCY)
+            Color.new(255, 255, 255, true)
           end
 
           it "make separate groups for fully transparent colors" do
-            colors << transparent_white
+            colors << [transparent_white, 0.1]
 
             expect(subject).to eq({
               white => [white],

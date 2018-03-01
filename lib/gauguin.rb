@@ -5,11 +5,8 @@ require "gauguin/colors_retriever"
 require "gauguin/colors_limiter"
 require "gauguin/colors_clusterer"
 require "gauguin/noise_reducer"
-require "gauguin/image_recolorer"
 require "gauguin/painting"
 require "gauguin/image"
-require "gauguin/image_repository"
-require "gauguin/palette_serializer"
 
 module Gauguin
   class << self
