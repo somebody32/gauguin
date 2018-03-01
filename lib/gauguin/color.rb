@@ -1,12 +1,11 @@
 module Gauguin
   class Color
-    attr_accessor :red, :green, :blue, :percentage, :transparent
+    attr_accessor :red, :green, :blue, :transparent
 
-    def initialize(red, green, blue, percentage = 1, transparent = false)
+    def initialize(red, green, blue, transparent = false)
       self.red = red
       self.green = green
       self.blue = blue
-      self.percentage = percentage
       self.transparent = transparent
     end
 
@@ -21,11 +20,20 @@ module Gauguin
     end
 
     def similar?(other_color)
-      transparent == other_color.transparent &&
-        distance(other_color) < Gauguin.configuration.color_similarity_threshold
+      return false if transparent != other_color.transparent
+
+      similarity_threshold = Gauguin.configuration.color_similarity_threshold
+      method = Gauguin.configuration.color_similarity_method
+
+      distance = method == :lab ? distance_lab(other_color) : distance_cie94(other_color)
+      distance < similarity_threshold
     end
 
-    def distance(other_color, weighting_type = :textiles)
+    def distance_lab(other_color)
+      (to_lab - other_color.to_lab).r
+    end
+
+    def distance_cie94(other_color, weighting_type = :graphic_arts)
       case weighting_type
       when :graphic_arts
         k_1 = 0.045
@@ -38,24 +46,6 @@ module Gauguin
       else
         raise ArgumentError, "Unsupported weighting type #{weighting_type}."
       end
-
-      # delta_E = Math.sqrt(
-      #   ((delta_L / (k_L * s_L)) ** 2) +
-      #   ((delta_C / (k_C * s_C)) ** 2) +
-      #   ((delta_H / (k_H * s_H)) ** 2)
-      # )
-      #
-      # Under some circumstances in real computers, delta_H could be an
-      # imaginary number (it's a square root value), so we're going to treat
-      # this as:
-      #
-      # delta_E = Math.sqrt(
-      #   ((delta_L / (k_L * s_L)) ** 2) +
-      #   ((delta_C / (k_C * s_C)) ** 2) +
-      #   (delta_H2 / ((k_H * s_H) ** 2)))
-      # )
-      #
-      # And not perform the square root when calculating delta_H2.
 
       k_C = k_H = 1
 
@@ -84,9 +74,11 @@ module Gauguin
     end
 
     def to_lab
-      rgb_vector = self.to_vector
-      xyz_vector = rgb_vector.to_xyz
-      xyz_vector.to_lab
+      @lab ||= begin
+        rgb_vector = to_vector
+        xyz_vector = rgb_vector.to_xyz
+        xyz_vector.to_lab
+      end
     end
 
     def to_vector
@@ -98,12 +90,12 @@ module Gauguin
     end
 
     def to_a
-      to_rgb + [self.percentage, self.transparent]
+      to_rgb + [self.transparent]
     end
 
     def self.from_a(array)
-      red, green, blue, percentage, transparent = array
-      Color.new(red, green, blue, percentage, transparent)
+      red, green, blue, transparent = array
+      Color.new(red, green, blue, transparent)
     end
 
     def to_key
@@ -115,7 +107,7 @@ module Gauguin
     end
 
     def inspect
-      msg = "#{to_s}[#{percentage}]"
+      msg = "#{to_s}"
       if transparent?
         msg += "[transparent]"
       end

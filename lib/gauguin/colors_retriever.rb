@@ -5,7 +5,7 @@ module Gauguin
     end
 
     def colors
-      colors = {}
+      colors = Hash.new(0)
 
       histogram = @image.color_histogram
       image_size = @image.width * @image.height
@@ -16,18 +16,14 @@ module Gauguin
 
         transparent = opacity.zero?
 
-        color = Gauguin::Color.new(red, green, blue, percentage, transparent)
+        color = Gauguin::Color.new(red, green, blue, transparent)
 
         # histogram can contain different magic pixels for
         # the same colors with different opacity
-        if colors[color]
-          colors[color].percentage += color.percentage
-        else
-          colors[color] = color
-        end
+        colors[color] += percentage
       end
 
-      colors.values
+      colors
     end
   end
 end

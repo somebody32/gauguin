@@ -7,7 +7,6 @@ module Gauguin
     end
 
     let(:painting) {
-      Gauguin.configure {|c| c.color_similarity_threshold = 10;}
       Painting.new(picture_path(file_name))
    }
 

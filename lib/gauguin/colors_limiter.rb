@@ -3,12 +3,9 @@ module Gauguin
     def call(colors)
       colors_limit = Gauguin.configuration.colors_limit
 
-      if colors.count > colors_limit
-        colors = colors.sort_by { |key, group| key.percentage }.
-          reverse[0..colors_limit - 1]
-      end
+      return colors if colors.size < colors_limit
 
-      colors
+      colors.sort_by { |_, percentage| percentage }.reverse.take(colors_limit)
     end
   end
 end

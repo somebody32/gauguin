@@ -23,18 +23,20 @@ module Gauguin
 
   class Configuration
     DEFAULT_MAX_COLORS_COUNT = 10
-    DEFAULT_COLORS_LIMIT = 5000
+    DEFAULT_COLORS_LIMIT = 10000
     DEFAULT_MIN_PERCENTAGE_SUM = 0.981
-    DEFAULT_COLOR_SIMILARITY_THRESHOLD = 15
+    DEFAULT_COLOR_SIMILARITY_THRESHOLD = 25
+    DEFAULT_COLOR_SIMILARITY_METHOD = :lab
 
     attr_accessor :max_colors_count, :colors_limit,
-      :min_percentage_sum, :color_similarity_threshold
+      :min_percentage_sum, :color_similarity_threshold, :color_similarity_method
 
     def initialize
       @max_colors_count = DEFAULT_MAX_COLORS_COUNT
       @colors_limit = DEFAULT_COLORS_LIMIT
       @min_percentage_sum = DEFAULT_MIN_PERCENTAGE_SUM
       @color_similarity_threshold = DEFAULT_COLOR_SIMILARITY_THRESHOLD
+      @color_similarity_method = DEFAULT_COLOR_SIMILARITY_METHOD
     end
   end
 end
