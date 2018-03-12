@@ -36,7 +36,7 @@ module Gauguin
       (to_lab - other_color.to_lab).r
     end
 
-    def distance_cie94(other_color, weighting_type = :graphic_arts)
+    def distance_cie94(other_color, weighting_type = :textiles)
       case weighting_type
       when :graphic_arts
         k_1 = 0.045

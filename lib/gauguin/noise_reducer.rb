@@ -5,6 +5,8 @@ module Gauguin
 
       percentage_sum = 0
       colors_clusters.each do |color|
+        next if color[1] < Gauguin.configuration.min_color_percentage
+
         pivots << color[0]
         percentage_sum += color[1]
         break if percentage_sum > Gauguin.configuration.min_percentage_sum
