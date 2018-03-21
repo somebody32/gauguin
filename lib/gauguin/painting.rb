@@ -1,5 +1,6 @@
 module Gauguin
   class Painting
+    attr_reader :color_count
 
     def initialize(path)
       @image ||= Gauguin::Image.new(path)
@@ -13,6 +14,7 @@ module Gauguin
       @palette ||= begin
         debug_mode = Gauguin.configuration.debug
         colors = @colors_retriever.colors
+        @color_count = colors.size
         puts "Colors total: #{colors.size}" if debug_mode
 
         colors = @colors_limiter.call(colors)
