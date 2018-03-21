@@ -11,14 +11,15 @@ module Gauguin
 
     def palette
       @palette ||= begin
+        debug_mode = Gauguin.configuration.debug
         colors = @colors_retriever.colors
-        puts "Colors total: #{colors.size}"
+        puts "Colors total: #{colors.size}" if debug_mode
 
         colors = @colors_limiter.call(colors)
-        puts "Colors after limitation: #{colors.size}"
+        puts "Colors after limitation: #{colors.size}" if debug_mode
 
         colors_clusters = @colors_clusterer.clusters(colors)
-        puts "Colors clusters: #{colors_clusters.size}"
+        puts "Colors clusters: #{colors_clusters.size}" if debug_mode
 
         @noise_reducer.call(colors_clusters)
       end
