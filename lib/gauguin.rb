@@ -7,6 +7,7 @@ require "gauguin/colors_clusterer"
 require "gauguin/noise_reducer"
 require "gauguin/painting"
 require "gauguin/image"
+require "gauguin/error"
 
 module Gauguin
   class << self

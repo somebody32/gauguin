@@ -1,4 +1,4 @@
-require "shellwords"
+require "open3"
 
 module Gauguin
   class Image
@@ -12,7 +12,14 @@ module Gauguin
     end
 
     def color_histogram
-      output = `convert #{path.shellescape} -format %c -alpha on histogram:info:-`
+      output = run_in_shell(
+        "convert",
+        path,
+        "-format", "%c",
+        "-alpha", "on",
+        "histogram:info:-"
+      )
+
       output.lines.map do |line|
         data = line.split(' ')
         count = data.shift
@@ -29,9 +36,17 @@ module Gauguin
     attr_accessor :path
 
     def identify!(path)
-      output = `identify #{path.shellescape}`.split(' ')
-      dimensions = output[2].split('x')
+      output = run_in_shell("identify", path)
+
+      dimensions = output.split(' ')[2].split('x')
       self.height, self.width = dimensions.map(&:to_i)
+    end
+
+    def run_in_shell(*args)
+      stdout_or_stderr, status = Open3.capture2e(*args)
+      raise(Gauguin::Error, stdout_or_stderr) if status != 0
+
+      stdout_or_stderr
     end
   end
 end
