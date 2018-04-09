@@ -15,6 +15,7 @@ module Gauguin
       output = run_in_shell(
         "convert",
         path,
+        "-posterize", "#{Gauguin.configuration.posterize_level}",
         "-format", "%c",
         "-alpha", "on",
         "histogram:info:-"

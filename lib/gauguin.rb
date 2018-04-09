@@ -27,10 +27,11 @@ module Gauguin
     DEFAULT_MIN_COLOR_PERCENTAGE = 0.01
     DEFAULT_COLOR_SIMILARITY_THRESHOLD = 25
     DEFAULT_COLOR_SIMILARITY_METHOD = :lab
+    DEFAULT_POSTERIZE_LEVEL = 8
 
     attr_accessor :max_colors_count, :colors_limit,
       :min_percentage_sum, :min_color_percentage, :color_similarity_threshold,
-      :color_similarity_method, :debug
+      :color_similarity_method, :posterize_level, :debug
 
     def initialize
       @max_colors_count = DEFAULT_MAX_COLORS_COUNT
@@ -39,6 +40,7 @@ module Gauguin
       @min_color_percentage = DEFAULT_MIN_COLOR_PERCENTAGE
       @color_similarity_threshold = DEFAULT_COLOR_SIMILARITY_THRESHOLD
       @color_similarity_method = DEFAULT_COLOR_SIMILARITY_METHOD
+      @posterize_level = DEFAULT_POSTERIZE_LEVEL
       @debug = false
     end
   end
