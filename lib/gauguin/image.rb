@@ -37,9 +37,13 @@ module Gauguin
     attr_accessor :path
 
     def identify!(path)
-      output = run_in_shell("identify", path)
+      output = run_in_shell(
+        "identify",
+        "-format", "%wx%h",
+        path
+      )
 
-      dimensions = output.split(' ')[2].split('x')
+      dimensions = output.split('x')
       self.height, self.width = dimensions.map(&:to_i)
     end
 
