@@ -28,7 +28,7 @@ module Gauguin
 
         rgb = data.join('').match(RGBA_REGEX)
 
-        [count.gsub(':', '').to_i, rgb[1..rgb.size-1].map(&:to_i)]
+        [count.delete(':').to_i, rgb[1..rgb.size-1].map(&:to_i)]
       end
     end
 
@@ -48,10 +48,10 @@ module Gauguin
     end
 
     def run_in_shell(*args)
-      stdout_or_stderr, status = Open3.capture2e(*args)
-      raise(Gauguin::Error, stdout_or_stderr) if status != 0
+      stdout, status = Open3.capture2(*args)
+      raise(Gauguin::Error, stdout) if status != 0
 
-      stdout_or_stderr
+      stdout
     end
   end
 end

@@ -18,9 +18,8 @@ module Gauguin
     private
 
     def reduced_clusters(colors_clusters, pivots)
-      colors_clusters.reduce({}) do |memo, c|
+      colors_clusters.each_with_object({}) do |c, memo|
         memo[c[0]] = c[1] if !c[0].transparent? && pivots.include?(c[0])
-        memo
       end
     end
   end
