@@ -1,6 +1,6 @@
 module Gauguin
   class Painting
-    attr_reader :color_count
+    attr_reader :color_count, :background_color
 
     def initialize(path)
       @image ||= Gauguin::Image.new(path)
@@ -23,8 +23,28 @@ module Gauguin
         colors_clusters = @colors_clusterer.clusters(colors)
         puts "Colors clusters: #{colors_clusters.size}" if debug_mode
 
-        @noise_reducer.call(colors_clusters)
+        dominant_colors = @noise_reducer.call(colors_clusters)
+
+        @background_color = background_color_from_palette(dominant_colors)
+        puts "Backround color: #{@backround_color}" if debug_mode
+
+        dominant_colors
       end
+    end
+
+    private
+
+    def background_color_from_palette(dominant_colors)
+      red, green, blue, opacity = @image.background_color
+      background_color = Gauguin::Color.new(red, green, blue, opacity.zero?)
+
+      background_from_dominant = dominant_colors.keys.each_with_object({}) do |color, accum|
+        distance = color.distance(background_color)
+        accum[color] = distance if distance < Gauguin.configuration.color_similarity_threshold;
+        accum
+      end.sort_by { |k, v| v }.first
+
+      background_from_dominant && background_from_dominant[0]
     end
   end
 end
