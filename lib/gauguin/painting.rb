@@ -1,6 +1,6 @@
 module Gauguin
   class Painting
-    attr_reader :color_count, :background_color
+    attr_reader :color_count, :background_color, :colors_above_noise_level
 
     def initialize(path)
       @image ||= Gauguin::Image.new(path)
@@ -20,13 +20,15 @@ module Gauguin
         colors = @colors_limiter.call(colors)
         puts "Colors after limitation: #{colors.size}" if debug_mode
 
+        nl = Gauguin.configuration.noise_level_threshold
+        @colors_above_noise_level = @colors_clusterer.above_threshold(colors, nl)
+        puts "Colors more than #{nl*100}%: #{colors_above_noise_level}" if debug_mode
+
         colors_clusters = @colors_clusterer.clusters(colors)
         puts "Colors clusters: #{colors_clusters.size}" if debug_mode
-
         dominant_colors = @noise_reducer.call(colors_clusters)
 
         @background_color = background_color_from_palette(dominant_colors)
-        puts "Backround color: #{@backround_color}" if debug_mode
 
         dominant_colors
       end

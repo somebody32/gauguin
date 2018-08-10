@@ -18,7 +18,7 @@ module Gauguin
 
     def clusters(colors)
       clusters = self.call(colors)
-      clusters.keys.sort_by { |color| color[1] }.last(Gauguin.configuration.max_colors_count).reverse
+      clusters.keys.sort_by { |c| c[1] }.last(Gauguin.configuration.max_colors_count).reverse
     end
 
     def reversed_clusters(clusters)
@@ -33,6 +33,10 @@ module Gauguin
       reversed_clusters
     end
 
+    def above_threshold(colors, threshold)
+      colors.select { |_, percentage| percentage > threshold }.size
+    end
+
     private
 
     def find_all_similar(colors, pivot, group)
@@ -43,7 +47,7 @@ module Gauguin
         group += similar_colors
         colors = others
 
-        pivot = group.sort_by {|e| e[1] }.last
+        pivot = group.sort_by { |e| e[1] }.last
       end
 
       [colors, pivot, group]
@@ -51,9 +55,7 @@ module Gauguin
 
     def update_pivots_percentages(clusters)
       clusters.each do |main_color, group|
-        percentage = group.inject(0) do |sum, color|
-          sum += color[1]
-        end
+        percentage = group.inject(0) { |sum, color| sum + color[1] }
         main_color[1] = percentage
       end
     end
