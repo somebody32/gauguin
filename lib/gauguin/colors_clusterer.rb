@@ -34,7 +34,7 @@ module Gauguin
     end
 
     def above_threshold(colors, threshold)
-      colors.select { |_, percentage| percentage > threshold }.size
+      colors.select { |color, percentage| !color.transparent && percentage > threshold }.size
     end
 
     private
