@@ -22,7 +22,7 @@ module Gauguin
     def similar?(other_color)
       return false if transparent != other_color.transparent
 
-      distance(other_color) < Gauguin.configuration.color_similarity_threshold
+      distance(other_color) <= Gauguin.configuration.color_similarity_threshold
     end
 
     def distance(other_color)
@@ -42,7 +42,7 @@ module Gauguin
       (to_lab - other_color.to_lab).r
     end
 
-    def distance_cie94(other_color, weighting_type = :textiles)
+    def distance_cie94(other_color, weighting_type = :graphic_arts)
       case weighting_type
       when :graphic_arts
         k_1 = 0.045
@@ -210,4 +210,3 @@ module Gauguin
     end
   end
 end
-
