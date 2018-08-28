@@ -29,8 +29,10 @@ module Gauguin
       case Gauguin.configuration.color_similarity_method
       when :lab
         distance_lab(other_color)
-      when :cie94
-        distance_cie94(other_color)
+      when :cie94_graphics
+        distance_cie94(other_color, :graphic_arts)
+      when :cie94_textile
+        distance_cie94(other_color, :textiles)
       when :e2k
         distance_e2k(other_color)
       else
