@@ -8,7 +8,7 @@ module Gauguin
         next if color[1] < Gauguin.configuration.min_color_percentage
 
         pivots << color[0]
-        percentage_sum += color[1]
+        percentage_sum += color[1] unless color[0].transparent?
         break if percentage_sum > Gauguin.configuration.min_percentage_sum
       end
 
