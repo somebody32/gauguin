@@ -38,6 +38,8 @@ module Gauguin
 
     def background_color_from_palette(dominant_colors)
       red, green, blue, opacity = @image.background_color
+      return nil if opacity.zero?
+
       background_color = Gauguin::Color.new(red, green, blue, opacity.zero?)
 
       background_from_dominant = dominant_colors.keys.each_with_object({}) do |color, accum|
@@ -50,4 +52,3 @@ module Gauguin
     end
   end
 end
-
