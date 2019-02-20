@@ -25,8 +25,9 @@ module Gauguin
       distance(other_color) <= Gauguin.configuration.color_similarity_threshold
     end
 
-    def distance(other_color)
-      case Gauguin.configuration.color_similarity_method
+    def distance(other_color, color_similarity_method: nil)
+      color_similarity_method ||= Gauguin.configuration.color_similarity_method
+      case color_similarity_method
       when :lab
         distance_lab(other_color)
       when :cie94_graphics
